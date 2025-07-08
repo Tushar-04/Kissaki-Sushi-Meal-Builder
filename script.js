@@ -135,8 +135,8 @@ const meals = [
         items: ['Sushi (2x)', 'Spicy Ramen (2x)', 'Bento Box (2x)', 'Nigri (2x)', 'Kimchi (2x)', 'Mango Mochi (3x)', 'Drinks (8x)'],
         ingredients: {
             'Uncooked Rice': 7,
-            'Water': 9,
-            'Fish Fillet': 8,
+            'Water': 8,
+            'Fish Fillet': 7,
             'Soy Sauce': 6,
             'Nori': 2,
             'Egg': 1,
