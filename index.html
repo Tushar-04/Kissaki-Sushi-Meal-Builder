@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kissaki Sushi</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🍱 Kissaki Sushi</h1>
+            <p>Select your meals and see the exact ingredients needed</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Meal Selection Section -->
+            <section class="meal-selector">
+                <h2>Select Your Meal Combo</h2>
+                <div class="dropdown-controls">
+                    <select id="mealDropdown" class="dropdown"></select>
+                    <div class="dropdown-quantity-controls">
+                        <button class="quantity-btn" id="mealDecreaseBtn">-</button>
+                        <span class="quantity-display" id="mealDropdownQty">0</span>
+                        <button class="quantity-btn" id="mealIncreaseBtn">+</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Individual Food Item Selection Section -->
+            <section class="item-selector">
+                <h2>Select Individual Food Item</h2>
+                <div class="dropdown-controls">
+                    <select id="itemDropdown" class="dropdown"></select>
+                    <div class="dropdown-quantity-controls">
+                        <button class="item-quantity-btn" id="itemDecreaseBtn">-</button>
+                        <span class="item-quantity-display" id="itemDropdownQty">0</span>
+                        <button class="item-quantity-btn" id="itemIncreaseBtn">+</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary Section -->
+            <section class="summary-section">
+                <div class="summary-header">
+                    <h2>🧾 Ingredient Summary</h2>
+                    <button class="reset-btn" id="resetBtn">Reset All</button>
+                </div>
+                
+                <div class="summary-content">
+                    <div class="selected-meals" id="selectedMeals">
+                        <h3>Selected Meals</h3>
+                        <div class="selected-list" id="selectedList">
+                            <!-- Selected meals will appear here -->
+                        </div>
+                    </div>
+                    
+                    <div class="food-items-breakdown" id="foodItemsBreakdown">
+                        <h3>Total Food Items</h3>
+                        <div class="food-items-list" id="foodItemsList">
+                            <!-- Food items will be calculated and displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="ingredients-breakdown" id="ingredientsBreakdown">
+                        <h3>Total Ingredients Needed</h3>
+                        <div class="ingredients-list" id="ingredientsList">
+                            <!-- Ingredients will be calculated and displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
