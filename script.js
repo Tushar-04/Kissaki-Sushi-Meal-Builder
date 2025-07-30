@@ -153,19 +153,17 @@ const meals = [
     {
         id: 'emergency-meal',
         name: '🚓 PD/EMS/DOJ Emergency Meal',
-        price: 450,
-        items: ['Bento Box (2x)', 'Kimchi (2x)', 'Mango Mochi (3x)', 'Strawberry Mochi (3x)', 'Drinks (8x)'],
+        price: 500,
+        items: ['Sushi (4x)', 'Kimchi (2x)', 'Drinks (6x)'],
         ingredients: {
             'Uncooked Rice': 4,
             'Water': 4,
-            'Fish Fillet': 2,
-            'Soy Sauce': 2,
-            'Cabbage': 6,
+            'Fish Fillet': 4,
+            'Soy Sauce': 4,
+            'Cabbage': 4,
+            'Nori': 4,
             'Fish Sauce': 2,
-            'Mango': 1,
-            'Strawberry': 2,
-            'Sugar': 2,
-            'Drinks': 8
+            'Drinks': 6
         }
     },
     {
