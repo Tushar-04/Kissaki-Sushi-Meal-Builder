@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kissaki Sushi Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <nav class="top-nav" aria-label="Primary navigation">
+                <a href="index.html">Menu</a>
+                <a class="active" href="admin.html">Admin</a>
+            </nav>
+            <h1>Kissaki Sushi Admin</h1>
+            <p>Update meal combos, food item names, and ingredient counts</p>
+        </header>
+
+        <main class="admin-page">
+            <section class="admin-toolbar" aria-label="Admin actions">
+                <button class="primary-btn" id="addMealBtn" type="button">Add Meal</button>
+                <button class="primary-btn" id="addFoodItemBtn" type="button">Add Food Item</button>
+                <button class="reset-btn" id="resetMenuBtn" type="button">Restore Defaults</button>
+                <span class="admin-status" id="adminStatus" role="status" aria-live="polite"></span>
+            </section>
+
+            <section class="admin-layout" aria-label="Meal editor">
+                <aside class="admin-sidebar">
+                    <h2>Meals</h2>
+                    <div class="admin-list" id="adminMealList"></div>
+                </aside>
+
+                <div class="admin-editor">
+                    <h2>Edit Meal</h2>
+                    <div class="empty-state" id="mealEditorEmpty">No meal selected</div>
+                    <form id="mealEditorForm" hidden>
+                        <label>
+                            Meal Name
+                            <input id="mealNameInput" type="text" autocomplete="off">
+                        </label>
+                        <label>
+                            Price
+                            <input id="mealPriceInput" type="number" min="0" step="1">
+                        </label>
+                        <label>
+                            Meal Items
+                            <div class="meal-item-editor" id="mealItemsEditor"></div>
+                        </label>
+                        <div class="form-actions">
+                            <button class="primary-btn subtle-btn" id="addMealItemBtn" type="button">Add Item</button>
+                            <button class="primary-btn" id="saveMealBtn" type="button">Save Meal</button>
+                            <button class="danger-btn" id="deleteMealBtn" type="button">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="admin-layout" aria-label="Food item editor">
+                <aside class="admin-sidebar">
+                    <h2>Food Items</h2>
+                    <div class="admin-list" id="adminFoodItemList"></div>
+                </aside>
+
+                <div class="admin-editor">
+                    <h2>Edit Food Item</h2>
+                    <div class="empty-state" id="foodItemEditorEmpty">No food item selected</div>
+                    <form id="foodItemEditorForm" hidden>
+                        <label>
+                            Food Item Name
+                            <input id="foodItemNameInput" type="text" autocomplete="off">
+                        </label>
+                        <label>
+                            Icon
+                            <input id="foodItemIconInput" type="text" autocomplete="off">
+                        </label>
+                        <label>
+                            Serving Size
+                            <input id="foodItemServingInput" type="number" min="1" step="1">
+                        </label>
+                        <label>
+                            Ingredients
+                            <div class="ingredient-editor" id="foodItemIngredientsEditor"></div>
+                        </label>
+                        <div class="form-actions">
+                            <button class="primary-btn subtle-btn" id="addIngredientBtn" type="button">Add Ingredient</button>
+                            <button class="primary-btn" id="saveFoodItemBtn" type="button">Save Food Item</button>
+                            <button class="danger-btn" id="deleteFoodItemBtn" type="button">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <datalist id="ingredientSuggestions"></datalist>
+</body>
+</html>
