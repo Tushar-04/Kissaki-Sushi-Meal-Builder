@@ -1,4 +1,12 @@
-const STORAGE_KEY = 'kissakiMenuData';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
+import { firebaseConfig, ADMIN_PASSWORD, ADMIN_USERNAME } from './firebase-config.js';
+
+const MENU_DOCUMENT_PATH = ['menus', 'current'];
+const firebaseConfigured = Boolean(firebaseConfig?.apiKey && firebaseConfig.apiKey !== 'PASTE_YOUR_API_KEY_HERE');
+const firebaseApp = firebaseConfigured ? initializeApp(firebaseConfig) : null;
+const db = firebaseApp ? getFirestore(firebaseApp) : null;
+const menuDocRef = db ? doc(db, ...MENU_DOCUMENT_PATH) : null;
 
 const defaultMenuData = {
     meals: [
@@ -39,13 +47,14 @@ const ingredientIcons = {
     'Uncooked Rice': '\u{1F35A}', Water: '\u{1F4A7}', 'Fish Fillet': '\u{1F41F}', 'Soy Sauce': '\u{1F962}', 'Fish Sauce': '\u{1F41F}', 'Chopped Spring Onion': '\u{1F9C5}', Tofu: '\u{1F9C8}', 'Capri Sun': '\u{1F9C3}', Cabbage: '\u{1F96C}', Drinks: '\u{1F964}', Mango: '\u{1F96D}', Strawberry: '\u{1F353}', Sugar: '\u{1F36F}', 'Cocoa Powder': '\u{1F36B}', 'Green Tea': '\u{1F375}', 'Green Tea Leaves': '\u{1F343}', Nori: '\u{1F30A}', Egg: '\u{1F95A}', 'Uncooked Noodles': '\u{1F35C}', 'Chilli Pepper': '\u{1F336}\uFE0F', Wine: '\u{1F377}', 'Asahi Beer': '\u{1F37A}'
 };
 
-let menuData = loadMenuData();
+let menuData = clone(defaultMenuData);
 let selectedMeals = {};
 let selectedItems = {};
 let currentMealId = menuData.meals[0]?.id || '';
 let currentItemId = menuData.foodItems[0]?.id || '';
 let activeAdminMealId = currentMealId;
 let activeAdminItemId = currentItemId;
+let adminUnlocked = false;
 
 const $ = (id) => document.getElementById(id);
 const parseLines = (value) => value.split('\n').map((line) => line.trim()).filter(Boolean);
@@ -54,18 +63,30 @@ function clone(value) {
     return JSON.parse(JSON.stringify(value));
 }
 
-function loadMenuData() {
+async function loadMenuData() {
+    if (!menuDocRef) {
+        showAdminStatus('Add Firebase config to enable online menu data.');
+        return clone(defaultMenuData);
+    }
+
     try {
-        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (stored?.meals?.length && stored?.foodItems?.length) return stored;
-    } catch {
-        localStorage.removeItem(STORAGE_KEY);
+        const snapshot = await getDoc(menuDocRef);
+        const stored = snapshot.exists() ? snapshot.data() : null;
+        if (stored?.meals?.length && stored?.foodItems?.length) return clone(stored);
+        showAdminStatus('Firestore is empty. Using built-in menu defaults.');
+    } catch (error) {
+        showAdminStatus(`Could not load Firestore menu: ${error.message}`);
     }
     return clone(defaultMenuData);
 }
 
-function saveMenuData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(menuData));
+async function saveMenuData() {
+    if (!menuDocRef) throw new Error('Firebase is not configured.');
+    await setDoc(menuDocRef, {
+        meals: menuData.meals,
+        foodItems: menuData.foodItems,
+        updatedAt: new Date().toISOString()
+    });
 }
 
 function escapeHtml(value = '') {
@@ -237,6 +258,7 @@ function getIngredientIcon(ingredient) {
 function initAdminPage() {
     if (!$('adminMealList')) return;
     renderAdmin();
+    initAdminAuth();
     $('addMealBtn').addEventListener('click', addMeal);
     $('addFoodItemBtn').addEventListener('click', addFoodItem);
     $('addMealItemBtn').addEventListener('click', addMealItemRow);
@@ -246,6 +268,58 @@ function initAdminPage() {
     $('saveFoodItemBtn').addEventListener('click', saveActiveFoodItem);
     $('deleteFoodItemBtn').addEventListener('click', deleteActiveFoodItem);
     $('resetMenuBtn').addEventListener('click', resetMenuData);
+}
+
+function initAdminAuth() {
+    $('adminLoginBtn')?.addEventListener('click', signInAdmin);
+    $('adminPasswordInput')?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') signInAdmin();
+    });
+    $('adminLogoutBtn')?.addEventListener('click', () => {
+        adminUnlocked = false;
+        updateAdminAuthState();
+    });
+    updateAdminAuthState();
+}
+
+function signInAdmin() {
+    const username = $('adminUsernameInput')?.value.trim();
+    const password = $('adminPasswordInput')?.value;
+    if (!username || !password) {
+        showAdminStatus('Enter admin ID and password.');
+        return;
+    }
+    if (username !== ADMIN_USERNAME) {
+        showAdminStatus('Invalid admin ID.');
+        return;
+    }
+    if (password !== ADMIN_PASSWORD) {
+        showAdminStatus('Invalid password.');
+        return;
+    }
+
+    adminUnlocked = true;
+    if ($('adminPasswordInput')) $('adminPasswordInput').value = '';
+    updateAdminAuthState();
+    showAdminStatus('Admin unlocked.');
+}
+
+function updateAdminAuthState() {
+    const canEdit = Boolean(menuDocRef && adminUnlocked);
+    const loginForm = $('adminLoginForm');
+    const userLabel = $('adminUserLabel');
+    const logoutBtn = $('adminLogoutBtn');
+
+    if (loginForm) loginForm.hidden = adminUnlocked;
+    if (logoutBtn) logoutBtn.hidden = !adminUnlocked;
+    if (userLabel) userLabel.textContent = adminUnlocked ? `Admin: ${ADMIN_USERNAME}` : '';
+
+    document.querySelectorAll('[data-admin-write]').forEach((element) => {
+        element.disabled = !canEdit;
+    });
+
+    if (!menuDocRef) showAdminStatus('Add Firebase config to enable online saves.');
+    else if (!adminUnlocked) showAdminStatus('Enter admin/admin to save menu changes.');
 }
 
 function renderAdmin() {
@@ -264,6 +338,7 @@ function renderAdmin() {
     renderMealEditor();
     renderFoodItemEditor();
     renderIngredientSuggestions();
+    updateAdminAuthState();
 }
 
 function adminListButton(item, activeId, type) {
@@ -325,6 +400,7 @@ function createMealItemRow(item = {}) {
     remove.className = 'danger-btn compact-btn';
     remove.type = 'button';
     remove.textContent = 'Remove';
+    remove.dataset.adminWrite = 'true';
     remove.addEventListener('click', () => {
         row.remove();
         if (!$('mealItemsEditor').children.length) addMealItemRow();
@@ -428,6 +504,7 @@ function createIngredientRow(ingredient = {}) {
     remove.className = 'danger-btn compact-btn';
     remove.type = 'button';
     remove.textContent = 'Remove';
+    remove.dataset.adminWrite = 'true';
     remove.addEventListener('click', () => {
         row.remove();
         if (!$('foodItemIngredientsEditor').children.length) addIngredientRow();
@@ -497,14 +574,21 @@ function resetMenuData() {
     persistAdminChange('Menu restored.');
 }
 
-function persistAdminChange(message) {
-    saveMenuData();
-    renderAdmin();
-    showAdminStatus(message);
+async function persistAdminChange(message) {
+    try {
+        await saveMenuData();
+        renderAdmin();
+        showAdminStatus(`${message} Firestore updated.`);
+    } catch (error) {
+        renderAdmin();
+        updateAdminAuthState();
+        showAdminStatus(`Save failed: ${error.message}`);
+    }
 }
 
 function showAdminStatus(message) {
     const status = $('adminStatus');
+    if (!status) return;
     status.textContent = message;
     window.clearTimeout(showAdminStatus.timer);
     showAdminStatus.timer = window.setTimeout(() => {
@@ -512,7 +596,12 @@ function showAdminStatus(message) {
     }, 2500);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    menuData = await loadMenuData();
+    currentMealId = menuData.meals[0]?.id || '';
+    currentItemId = menuData.foodItems[0]?.id || '';
+    activeAdminMealId = currentMealId;
+    activeAdminItemId = currentItemId;
     initMenuPage();
     initAdminPage();
 });

@@ -20,9 +20,16 @@
 
         <main class="admin-page">
             <section class="admin-toolbar" aria-label="Admin actions">
-                <button class="primary-btn" id="addMealBtn" type="button">Add Meal</button>
-                <button class="primary-btn" id="addFoodItemBtn" type="button">Add Food Item</button>
-                <button class="reset-btn" id="resetMenuBtn" type="button">Restore Defaults</button>
+                <div class="admin-login" id="adminLoginForm">
+                    <input id="adminUsernameInput" type="text" autocomplete="username" placeholder="Admin ID" aria-label="Admin ID">
+                    <input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="Password" aria-label="Admin password">
+                    <button class="primary-btn" id="adminLoginBtn" type="button">Sign In</button>
+                </div>
+                <span class="admin-user" id="adminUserLabel"></span>
+                <button class="primary-btn subtle-btn" id="adminLogoutBtn" type="button" hidden>Sign Out</button>
+                <button class="primary-btn" id="addMealBtn" type="button" data-admin-write>Add Meal</button>
+                <button class="primary-btn" id="addFoodItemBtn" type="button" data-admin-write>Add Food Item</button>
+                <button class="reset-btn" id="resetMenuBtn" type="button" data-admin-write>Restore Defaults</button>
                 <span class="admin-status" id="adminStatus" role="status" aria-live="polite"></span>
             </section>
 
@@ -49,9 +56,9 @@
                             <div class="meal-item-editor" id="mealItemsEditor"></div>
                         </label>
                         <div class="form-actions">
-                            <button class="primary-btn subtle-btn" id="addMealItemBtn" type="button">Add Item</button>
-                            <button class="primary-btn" id="saveMealBtn" type="button">Save Meal</button>
-                            <button class="danger-btn" id="deleteMealBtn" type="button">Delete</button>
+                            <button class="primary-btn subtle-btn" id="addMealItemBtn" type="button" data-admin-write>Add Item</button>
+                            <button class="primary-btn" id="saveMealBtn" type="button" data-admin-write>Save Meal</button>
+                            <button class="danger-btn" id="deleteMealBtn" type="button" data-admin-write>Delete</button>
                         </div>
                     </form>
                 </div>
@@ -84,9 +91,9 @@
                             <div class="ingredient-editor" id="foodItemIngredientsEditor"></div>
                         </label>
                         <div class="form-actions">
-                            <button class="primary-btn subtle-btn" id="addIngredientBtn" type="button">Add Ingredient</button>
-                            <button class="primary-btn" id="saveFoodItemBtn" type="button">Save Food Item</button>
-                            <button class="danger-btn" id="deleteFoodItemBtn" type="button">Delete</button>
+                            <button class="primary-btn subtle-btn" id="addIngredientBtn" type="button" data-admin-write>Add Ingredient</button>
+                            <button class="primary-btn" id="saveFoodItemBtn" type="button" data-admin-write>Save Food Item</button>
+                            <button class="danger-btn" id="deleteFoodItemBtn" type="button" data-admin-write>Delete</button>
                         </div>
                     </form>
                 </div>
@@ -94,7 +101,7 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
     <datalist id="ingredientSuggestions"></datalist>
 </body>
 </html>
