@@ -2,7 +2,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.7.0/firebas
 import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
 import { firebaseConfig, ADMIN_PASSWORD, ADMIN_USERNAME } from './firebase-config.js';
 
-const MENU_DOCUMENT_PATH = ['menus', 'current'];
+const MENU_DOCUMENT_PATH = ['menus', 'kissaki-sushi'];
 const firebaseConfigured = Boolean(firebaseConfig?.apiKey && firebaseConfig.apiKey !== 'PASTE_YOUR_API_KEY_HERE');
 const firebaseApp = firebaseConfigured ? initializeApp(firebaseConfig) : null;
 const db = firebaseApp ? getFirestore(firebaseApp) : null;
